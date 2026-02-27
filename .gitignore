@@ -1,5 +1,8 @@
 node_modules
-.evn
+.env
 .env.*
 !.env.example
 dist
+
+/src/generate
+/generated/prisma 

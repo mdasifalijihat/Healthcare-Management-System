@@ -1,0 +1,43 @@
+import jwt, { JwtPayload, SignOptions } from "jsonwebtoken";
+
+const createToken = (
+  payload: JwtPayload,
+  secret: string,
+  { expiresIn }: SignOptions,
+) => {
+  const token = jwt.sign(payload, secret, { expiresIn });
+  return token;
+};
+
+const verifyToken = (token: string, secret: string) => {
+  try {
+    const decoded = jwt.verify(token, secret) as string;
+    return {
+      success: true,
+      data: decoded,
+    };
+  } catch (error: unknown) {
+    let message = "Invalid token";
+
+    if (error instanceof Error) {
+      message = error.message;
+    }
+
+    return {
+      success: false,
+      message,
+      error,
+    };
+  }
+};
+
+const decodeToken = (token: string) => {
+  const decoded = jwt.decode(token) as JwtPayload | null;
+  return decoded;
+};
+
+export const jwtUtils = {
+  createToken,
+  verifyToken,
+  decodeToken,
+};
