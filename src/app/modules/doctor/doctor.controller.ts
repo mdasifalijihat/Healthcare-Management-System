@@ -30,7 +30,8 @@ const getDoctorById = catchAsync(async (req: Request, res: Response) => {
 // 🔥 UPDATE
 const updateDoctor = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
-  const result = await doctorService.updateDoctor(id as string, req.body);
+  const payload = req.body
+  const result = await doctorService.updateDoctor(id as string, payload);
 
   sendResponse(res, {
     httpStatusCode: status.OK,
