@@ -68,6 +68,11 @@ export const checkAuth =
               "Forbidden: You don't have permission to access this resource",
             );
           }
+          req.user = {
+            userId: user.id,
+            role: user.role,
+            email: user.email,
+          };
         }
       }
 
@@ -104,6 +109,7 @@ export const checkAuth =
           "Forbidden: You don't have permission to access this resource",
         );
       }
+
       next();
     } catch (err) {
       next(err);
