@@ -5,6 +5,7 @@ import { sendResponse } from "../../shared/sendResponse";
 import status from "http-status";
 import { tokenUtils } from "../../utils/token";
 import AppError from "../../errorHelpers/AppError";
+import { cookieUtils } from "../../utils/cookie";
 
 const registerPatient = catchAsync(async (req: Request, res: Response) => {
   const payload = req.body;
@@ -101,9 +102,70 @@ const getNewTokens = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const changePassword = catchAsync(async (req: Request, res: Response) => {
+  const payload = req.body;
+  const sessionToken =
+    req.cookies.betterAuthSession || req.headers.authorization?.split(" ")[1];
+
+  if (!sessionToken) {
+    throw new AppError(status.UNAUTHORIZED, "Session token is missing");
+  }
+
+  const result = await AuthService.changePassword(payload, sessionToken);
+
+  const { accessToken, refreshToken, token } = result;
+  tokenUtils.setAccessTokenCookie(res, accessToken);
+  tokenUtils.setRefreshTokenCookie(res, refreshToken);
+  tokenUtils.setBetterAuthSessionCookie(res, token as string);
+
+  sendResponse(res, {
+    httpStatusCode: status.OK,
+    success: true,
+    message: "Password changed successfully",
+    data: result,
+  });
+});
+
+const logoutUser = catchAsync(async (req: Request, res: Response) => {
+  // 1️⃣ Get session token from cookie or header
+  const sessionToken =
+    req.cookies.betterAuthSession || req.headers.authorization?.split(" ")[1];
+
+  if (!sessionToken) {
+    throw new AppError(status.UNAUTHORIZED, "Session token missing");
+  }
+
+  cookieUtils.clearCookie(res, "accessToken", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none",
+  });
+  cookieUtils.clearCookie(res, "refreshToken", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none",
+  });
+
+  cookieUtils.clearCookie(res, "betterAuthSession", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none",
+  });
+
+  // 4️⃣ Send response
+  sendResponse(res, {
+    httpStatusCode: status.OK,
+    success: true,
+    message: "Logged out successfully",
+    data: null,
+  });
+});
+
 export const AuthController = {
   registerPatient,
   loginUser,
   getMe,
   getNewTokens,
+  changePassword,
+  logoutUser,
 };
