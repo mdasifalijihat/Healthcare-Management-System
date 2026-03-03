@@ -163,6 +163,9 @@ const getMe = async (user: IRequestUser) => {
 };
 
 const getNewTokens = async (refreshToken: string, sessionToken: string) => {
+  if (!sessionToken) {
+    throw new AppError(status.UNAUTHORIZED, "Session token missing");
+  }
   const isSessionTokenExists = await prisma.session.findUnique({
     where: {
       token: sessionToken,
@@ -181,31 +184,54 @@ const getNewTokens = async (refreshToken: string, sessionToken: string) => {
     envVars.REFRESH_TOKEN_SECRET,
   );
 
-  if (!verifiedRefreshToken.success && verifiedRefreshToken.error) {
+  if (!verifiedRefreshToken.success) {
     throw new AppError(status.UNAUTHORIZED, "Invalid refresh token");
   }
 
-  const data = verifiedRefreshToken.data as unknown as JwtPayload;
+  // 🔥 no cast needed
+  const data = verifiedRefreshToken.data as JwtPayload;
+
+  // const newAccessToken = tokenUtils.getAccessToken({
+  //   userId: data.user.id,
+  //   role: data.user.role,
+  //   name: data.user.name,
+  //   email: data.user.email,
+  //   status: data.user.status,
+  //   isDeleted: data.user.isDeleted,
+  //   emailVerified: data.user.emailVerified,
+  // });
+
+  // const newRefreshToken = tokenUtils.getRefreshToken({
+  //   userId: data.user.id,
+  //   role: data.user.role,
+  //   name: data.user.name,
+  //   email: data.user.email,
+  //   status: data.user.status,
+  //   isDeleted: data.user.isDeleted,
+  //   emailVerified: data.user.emailVerified,
+  // });
+
 
   const newAccessToken = tokenUtils.getAccessToken({
-    userId: data.user.id,
-    role: data.user.role,
-    name: data.user.name,
-    email: data.user.email,
-    status: data.user.status,
-    isDeleted: data.user.isDeleted,
-    emailVerified: data.user.emailVerified,
+    userId: data.userId,
+    role: data.role,
+    name: data.name,
+    email: data.email,
+    status: data.status,
+    isDeleted: data.isDeleted,
+    emailVerified: data.emailVerified,
   });
 
   const newRefreshToken = tokenUtils.getRefreshToken({
-    userId: data.user.id,
-    role: data.user.role,
-    name: data.user.name,
-    email: data.user.email,
-    status: data.user.status,
-    isDeleted: data.user.isDeleted,
-    emailVerified: data.user.emailVerified,
+    userId: data.userId,
+    role: data.role,
+    name: data.name,
+    email: data.email,
+    status: data.status,
+    isDeleted: data.isDeleted,
+    emailVerified: data.emailVerified,
   });
+
 
   const { token } = await prisma.session.update({
     where: {
@@ -213,7 +239,7 @@ const getNewTokens = async (refreshToken: string, sessionToken: string) => {
     },
     data: {
       token: sessionToken,
-      expiresAt: new Date(Date.now() + 60 * 60 * 60 * 24 * 1000),
+      expiresAt: new Date(Date.now() + 60 * 60 * 24 * 1000),
       updatedAt: new Date(),
     },
   });

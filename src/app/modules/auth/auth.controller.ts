@@ -67,10 +67,17 @@ const getMe = catchAsync(async (req: Request, res: Response) => {
 
 const getNewTokens = catchAsync(async (req: Request, res: Response) => {
   const refreshToken = req.cookies.refreshToken;
-  const betterAuthSessionToken = req.cookies["better-auth.session_token"];
+  const betterAuthSessionToken = req.cookies.betterAuthSession;
+  console.log("session token:", betterAuthSessionToken);
+  console.log("cookies:", req.cookies);
   if (!refreshToken) {
     throw new AppError(status.UNAUTHORIZED, "refresh token is missing");
   }
+
+  if (!betterAuthSessionToken) {
+    throw new AppError(status.UNAUTHORIZED, "session token is missing");
+  }
+
   const result = await AuthService.getNewTokens(
     refreshToken,
     betterAuthSessionToken,

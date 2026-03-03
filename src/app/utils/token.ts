@@ -7,7 +7,7 @@ import { cookieUtils } from "./cookie";
 import { Response } from "express";
 
 
-const ONE_DAY = 1000 * 60 * 60 * 24;
+const ONE_DAY = 1000 * 60 * 60 * 24 ;
 const SEVEN_DAYS = ONE_DAY * 7;
 
 // add functions to generate access and refresh tokens using jwtUtils and env variables
