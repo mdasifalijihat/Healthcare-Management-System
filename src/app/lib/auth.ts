@@ -8,6 +8,8 @@ import { sendEmail } from "../utils/email";
 
 // If your Prisma file is located elsewhere, you can change the path
 export const auth = betterAuth({
+  baseURL: envVars.BETTER_AUTH_URL,
+  secret: envVars.BETTER_AUTH_SECRET,
   database: prismaAdapter(prisma, {
     provider: "postgresql",
   }),
@@ -15,6 +17,25 @@ export const auth = betterAuth({
     enabled: true,
     requireEmailVerification: true,
   },
+
+  socialProviders: {
+    google: {
+      clientId: envVars.GOOGLE_CLIENT_ID,
+      clientSecret: envVars.GOOGLE_CLIENT_SECRET,
+
+      mapProfileToUser: () => {
+        return {
+          role: Role.PATIENT,
+          status: UserStatus.ACTIVE,
+          needPasswordChange: false,
+          emailVerified: true,
+          isDeleted: false,
+          deletedAt: null,
+        };
+      },
+    },
+  },
+
   emailVerification: {
     sendOnSignIn: true,
     sendOnSignUp: true,
@@ -52,11 +73,10 @@ export const auth = betterAuth({
       },
     },
   },
-  trustedOrigins: [envVars.BETTER_AUTH_URL || "http://localhost:5000"],
-
-  advanced: {
-    disableCSRFCheck: true,
-  },
+  trustedOrigins: [
+    envVars.BETTER_AUTH_URL || "http://localhost:5000",
+    envVars.FRONTEND_URL,
+  ],
 
   plugins: [
     bearer(),
@@ -70,10 +90,10 @@ export const auth = betterAuth({
             },
           });
           if (user && !user.emailVerified) {
-            sendEmail({
+            await sendEmail({
               to: email,
-              subject: "verify your email",
-              templateName: "otp",
+              subject: "Verify Your Email",
+              templateName: "verify-email",
               templateData: {
                 name: user.name,
                 otp,
@@ -88,13 +108,15 @@ export const auth = betterAuth({
           });
 
           if (user) {
+            const resetLink = `${envVars.FRONTEND_URL}/reset-password?email=${email}&otp=${otp}`;
             await sendEmail({
               to: email,
               subject: "Reset Your Password",
-              templateName: "otp",
+              templateName: "password-reset",
               templateData: {
                 name: user.name,
                 otp,
+                resetLink,
               },
             });
           }
@@ -106,11 +128,37 @@ export const auth = betterAuth({
   ],
 
   session: {
-    expiresIn: 60 * 60 * 60 * 24, // 24 hours in seconds
-    updateAge: 60 * 60 * 60, // 24 hours in seconds
+    expiresIn: 60 * 60 * 24, // 24 hours in seconds
+    updateAge: 60 * 60, // 24 hours in seconds
     cookieCache: {
       enabled: true,
-      maxAge: 60 * 60 * 60 * 24 * 1, // 1 day in seconds
+      maxAge: 60 * 60 * 24 * 1, // 1 day in seconds
+    },
+  },
+  redirectUrls: {
+    signIn: `${envVars.BETTER_AUTH_URL}/api/v1/google/success`,
+  },
+
+  advanced: {
+    // disableCSRFCheck: true,
+    useSecureCookies: false,
+    cookies: {
+      state: {
+        attributes: {
+          sameSite: "none",
+          secure: true,
+          httpOnly: true,
+          path: "/",
+        },
+      },
+      sessionToken: {
+        attributes: {
+          sameSite: "none",
+          secure: true,
+          httpOnly: true,
+          path: "/",
+        },
+      },
     },
   },
 });

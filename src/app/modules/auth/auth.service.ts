@@ -254,10 +254,6 @@ const changePassword = async (
       Authorization: `Bearer ${sessionToken}`,
     }),
   });
-
-  if (!session) {
-    throw new AppError(status.UNAUTHORIZED, "Invalid session token");
-  }
   if (!session) {
     throw new AppError(status.UNAUTHORIZED, "Invalid session token");
   }
@@ -270,7 +266,7 @@ const changePassword = async (
       revokeOtherSessions: true,
     },
     headers: new Headers({
-      Authorization: ` Bearer ${sessionToken}`,
+      Authorization: `Bearer ${sessionToken}`,
     }),
   });
 
@@ -399,11 +395,85 @@ const resetPassword = async (
       password: newPassword,
     },
   });
+
+  if (isUserExist.needPasswordChange) {
+    await prisma.user.update({
+      where: {
+        id: isUserExist.id,
+      },
+      data: {
+        needPasswordChange: false,
+      },
+    });
+  }
+
   await prisma.session.deleteMany({
     where: {
       userId: isUserExist.id,
     },
   });
+  return {
+    message: "Password reset successful",
+  };
+};
+
+//google login
+const googleLogin = async () => {
+  const data = await auth.api.signInSocial({
+    body: {
+      provider: "google",
+    },
+  });
+
+  return data;
+};
+
+// googleLoginSuccess
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const googleLoginSuccess = async (session: Record<string, any>) => {
+  const existingPatient = await prisma.patient.findUnique({
+    where: { userId: session.user.id },
+  });
+
+  if (!existingPatient) {
+    await prisma.patient.create({
+      data: {
+        userId: session.user.id,
+        name: session.user.name,
+        email: session.user.email,
+      },
+    });
+  }
+  const accessToken = tokenUtils.getAccessToken({
+    userId: session.user.id,
+    role: session.user.role,
+    name: session.user.name,
+    email: session.user.email,
+    status: session.user.status,
+    isDeleted: session.user.isDeleted,
+    emailVerified: session.user.emailVerified,
+  });
+  const refreshToken = tokenUtils.getRefreshToken({
+    userId: session.user.id,
+    role: session.user.role,
+    name: session.user.name,
+    email: session.user.email,
+    status: session.user.status,
+    isDeleted: session.user.isDeleted,
+    emailVerified: session.user.emailVerified,
+  });
+  return {
+    accessToken,
+    refreshToken,
+  };
+};
+
+// handlerOAuthError
+const handleOAuthError = async (error: string) => {
+  return {
+    message: "OAuth login failed",
+    error,
+  };
 };
 
 export const AuthService = {
@@ -416,4 +486,7 @@ export const AuthService = {
   verifyEmail,
   forgotPassword,
   resetPassword,
+  googleLogin,
+  googleLoginSuccess,
+  handleOAuthError,
 };

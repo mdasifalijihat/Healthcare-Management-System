@@ -6,8 +6,7 @@ import status from "http-status";
 import { cookieUtils } from "./cookie";
 import { Response } from "express";
 
-
-const ONE_DAY = 1000 * 60 * 60 * 24 ;
+const ONE_DAY = 1000 * 60 * 60 * 24;
 const SEVEN_DAYS = ONE_DAY * 7;
 
 // add functions to generate access and refresh tokens using jwtUtils and env variables
@@ -51,8 +50,10 @@ const getRefreshToken = (payload: JwtPayload): string => {
 const setAccessTokenCookie = (res: Response, token: string) => {
   cookieUtils.setCookie(res, "accessToken", token, {
     httpOnly: true,
-    secure: true,
-    sameSite: "none",
+    // secure: true,
+    // sameSite: "none",
+    secure: process.env.NODE_ENV === "production", // localhost/dev এ false
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     path: "/",
     maxAge: ONE_DAY, // 24 hours in seconds
   });
@@ -62,8 +63,10 @@ const setAccessTokenCookie = (res: Response, token: string) => {
 const setRefreshTokenCookie = (res: Response, token: string) => {
   cookieUtils.setCookie(res, "refreshToken", token, {
     httpOnly: true,
-    secure: true,
-    sameSite: "none",
+    // secure: true,
+    // sameSite: "none",
+    secure: process.env.NODE_ENV === "production", // localhost/dev এ false
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     path: "/",
     maxAge: SEVEN_DAYS, // 7 days in seconds
   });
@@ -72,10 +75,12 @@ const setRefreshTokenCookie = (res: Response, token: string) => {
 const setBetterAuthSessionCookie = (res: Response, token: string) => {
   cookieUtils.setCookie(res, "betterAuthSession", token, {
     httpOnly: true,
-    secure: true,
-    sameSite: "none",
+    // secure: true,
+    // sameSite: "none",
+    secure: process.env.NODE_ENV === "production", // localhost/dev এ false
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     path: "/",
-    maxAge: ONE_DAY, // 1 day 
+    maxAge: ONE_DAY, // 1 day
   });
 };
 

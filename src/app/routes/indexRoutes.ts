@@ -7,7 +7,7 @@ import { AdminRoutes } from "../modules/admin/admin.route";
 
 const router = Router();
 
-router.use("/", AuthRouters);
+router.use("/auth", AuthRouters);
 router.use("/specialties", SpecialtyRouter);
 router.use("/users", UserRouters);
 router.use("/doctors", DoctorRouter);
