@@ -22,7 +22,6 @@ export const auth = betterAuth({
     google: {
       clientId: envVars.GOOGLE_CLIENT_ID,
       clientSecret: envVars.GOOGLE_CLIENT_SECRET,
-
       mapProfileToUser: () => {
         return {
           role: Role.PATIENT,
@@ -73,10 +72,6 @@ export const auth = betterAuth({
       },
     },
   },
-  trustedOrigins: [
-    envVars.BETTER_AUTH_URL || "http://localhost:5000",
-    envVars.FRONTEND_URL,
-  ],
 
   plugins: [
     bearer(),
@@ -138,6 +133,10 @@ export const auth = betterAuth({
   redirectUrls: {
     signIn: `${envVars.BETTER_AUTH_URL}/api/v1/google/success`,
   },
+  trustedOrigins: [
+    envVars.BETTER_AUTH_URL || "http://localhost:5000",
+    envVars.FRONTEND_URL,
+  ],
 
   advanced: {
     // disableCSRFCheck: true,

@@ -417,17 +417,6 @@ const resetPassword = async (
   };
 };
 
-//google login
-const googleLogin = async () => {
-  const data = await auth.api.signInSocial({
-    body: {
-      provider: "google",
-    },
-  });
-
-  return data;
-};
-
 // googleLoginSuccess
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const googleLoginSuccess = async (session: Record<string, any>) => {
@@ -448,31 +437,15 @@ const googleLoginSuccess = async (session: Record<string, any>) => {
     userId: session.user.id,
     role: session.user.role,
     name: session.user.name,
-    email: session.user.email,
-    status: session.user.status,
-    isDeleted: session.user.isDeleted,
-    emailVerified: session.user.emailVerified,
   });
   const refreshToken = tokenUtils.getRefreshToken({
     userId: session.user.id,
     role: session.user.role,
     name: session.user.name,
-    email: session.user.email,
-    status: session.user.status,
-    isDeleted: session.user.isDeleted,
-    emailVerified: session.user.emailVerified,
   });
   return {
     accessToken,
     refreshToken,
-  };
-};
-
-// handlerOAuthError
-const handleOAuthError = async (error: string) => {
-  return {
-    message: "OAuth login failed",
-    error,
   };
 };
 
@@ -486,7 +459,5 @@ export const AuthService = {
   verifyEmail,
   forgotPassword,
   resetPassword,
-  googleLogin,
   googleLoginSuccess,
-  handleOAuthError,
 };
