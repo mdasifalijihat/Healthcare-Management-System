@@ -21,13 +21,6 @@ export interface PrismaCountArgs {
   [key: string]: unknown;
 }
 
-export interface PrismaModelDelegate {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  findMany(args?: any): Promise<any[]>;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  count(args?: any): Promise<number>;
-}
-
 export interface IqueryParams {
   searchTerm?: string;
   page: string;
@@ -38,10 +31,27 @@ export interface IqueryParams {
   [key: string]: string | undefined;
 }
 
+export interface PrismaModelDelegate {
+  findMany(args?: PrismaFindManyArgs): Promise<unknown[]>;
+  count(args?: PrismaCountArgs): Promise<number>;
+}
+
+export interface IQueryParams {
+  searchTerm?: string;
+  page?: string;
+  limit?: string;
+  sortBy?: string;
+  sortOrder?: "asc" | "desc";
+  fields?: string;
+  includes?: string;
+  [key: string]: unknown;
+}
+
 export interface IqueryConfig {
   searchableFields?: string[];
   filterableFields?: string[];
 }
+
 export interface PrismaStringFilters {
   contains: string;
   starsWith?: string;
@@ -61,4 +71,15 @@ export interface PrismaWhereConditions {
   AND?: Record<string, unknown>[];
   NOT?: Record<string, unknown>[];
   [key: string]: unknown;
+}
+
+export interface PrismaNumberFilter {
+  equals?: number;
+  in?: number[];
+  notIn?: number;
+  lt?: number;
+  lte?: number;
+  gt?: number;
+  gte?: number;
+  not?: PrismaNumberFilter | number;
 }
