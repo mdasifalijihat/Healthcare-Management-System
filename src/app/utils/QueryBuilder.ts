@@ -1,241 +1,3 @@
-// import { unknown } from "zod";
-// import {
-//   IqueryConfig,
-//   IqueryParams,
-//   PrismaWhereConditions,
-//   PrismaCountArgs,
-//   PrismaFindManyArgs,
-//   PrismaModelDelegate,
-//   PrismaStringFilters,
-//   PrismaNumberFilter,
-// } from "../interface/query.interface";
-
-// export class QueryBuilder<
-//   T,
-//   TWhereInput = Record<string, unknown>,
-//   TInclude = Record<string, unknown>,
-// > {
-//   private query: PrismaFindManyArgs = {};
-//   private countQuery: PrismaCountArgs = {};
-
-//   private page: number = 1;
-//   private limit: number = 10;
-//   private skip: number = 0;
-
-//   private sortBy: string = "createdAt";
-//   private sortOrder: "asc" | "desc" = "desc";
-
-//   private selectFields: Record<string, boolean | undefined> = {};
-
-//   constructor(
-//     private model: PrismaModelDelegate,
-//     private queryParams: IqueryParams,
-//     private config: IqueryConfig,
-//   ) {
-//     this.query = {
-//       where: {},
-//       include: {},
-//       orderBy: {},
-//     };
-
-//     this.countQuery = {
-//       where: {},
-//     };
-//   }
-//   search(): this {
-//     const { searchTerm } = this.queryParams;
-//     const { searchableFields } = this.config;
-
-//     if (searchTerm && searchableFields && searchableFields.length > 0) {
-//       const searchConditions: Record<string, unknown>[] = searchableFields.map(
-//         (field) => {
-//           const parts = field.split(".");
-
-//           const stringFilter: PrismaStringFilters = {
-//             contains: searchTerm,
-//             mode: "insensitive",
-//           };
-
-//           // relation.field
-//           if (parts.length === 2) {
-//             const [relation, nestedField] = parts;
-
-//             return {
-//               [relation]: {
-//                 [nestedField]: stringFilter,
-//               },
-//             };
-//           }
-
-//           // relation.nestedRelation.field
-//           if (parts.length === 3) {
-//             const [relation, nestedRelation, nestedField] = parts;
-
-//             return {
-//               [relation]: {
-//                 [nestedRelation]: {
-//                   [nestedField]: stringFilter,
-//                 },
-//               },
-//             };
-//           }
-
-//           // direct field
-//           return {
-//             [field]: stringFilter,
-//           };
-//         },
-//       );
-
-//       const whereConditions = this.query.where as PrismaWhereConditions;
-//       whereConditions.OR = searchConditions;
-
-//       const countWhereConditions = this.countQuery
-//         .where as PrismaWhereConditions;
-//       countWhereConditions.OR = searchConditions;
-//     }
-
-//     return this;
-//   }
-
-//   filter(): this {
-//     const { filterableFields } = this.config;
-
-//     const excludeFields = [
-//       "searchTerm",
-//       "page",
-//       "limit",
-//       "sortBy",
-//       "sortOrder",
-//       "fields",
-//       "includes",
-//     ];
-
-//     const filterParams: Record<string, unknown> = {};
-
-//     Object.keys(this.queryParams).forEach((key) => {
-//       if (!excludeFields.includes(key)) {
-//         filterParams[key] = this.parseFilterValue(this.queryParams[key]);
-//       }
-//     });
-
-//     const queryWhere = this.query.where as Record<string, unknown>;
-//     const countQueryWhere = this.countQuery.where as Record<string, unknown>;
-
-//     Object.entries(filterParams).forEach(([key, value]) => {
-//       if (value === undefined || value === "") return;
-
-//       const isAllowedField =
-//         !filterableFields ||
-//         filterableFields.length === 0 ||
-//         filterableFields.includes(key);
-
-//       if (!isAllowedField) return;
-
-//       if (key.includes(".")) {
-//         const parts = key.split(".");
-
-//         if (parts.length === 2) {
-//           const [relation, nestedField] = parts;
-
-//           queryWhere[relation] = {
-//             [nestedField]: value,
-//           };
-
-//           countQueryWhere[relation] = {
-//             [nestedField]: value,
-//           };
-//         }
-
-//         if (parts.length === 3) {
-//           const [relation, nestedRelation, nestedField] = parts;
-
-//           queryWhere[relation] = {
-//             [nestedRelation]: {
-//               [nestedField]: value,
-//             },
-//           };
-
-//           countQueryWhere[relation] = {
-//             [nestedRelation]: {
-//               [nestedField]: value,
-//             },
-//           };
-//         }
-//       } else {
-//         queryWhere[key] = value;
-//         countQueryWhere[key] = value;
-//       }
-//       if(typeof value === 'object' && value !== null && !Array.isArray(value)){
-//         queryWhere[key] = this.parseFilterValue(value);
-//         countQueryWhere[key] =this.parseFilterValue(value)
-//         return
-//       }
-
-//       // direct value pars
-//       queryWhere[key] = this.parseFilterValue(value);
-//       countQueryWhere[key] = this.parseFilterValue(value)
-
-//     })
-
-//     return this;
-//   }
-
-//   private parseFilterValue(value: unknown): unknown {
-//     if (value === "true") return true;
-//     if (value === "false") return false;
-
-//     if (typeof value === "string" && !isNaN(Number(value)) && value != "") {
-//       return Number(value);
-//     }
-//     if (Array.isArray(value)) {
-//       return { in: value.map((item) => this.parseFilterValue(item)) };
-//     }
-
-//     return value;
-//   }
-
-//   private parseRangeFilter(
-//     value: Record<string, unknown>,
-//   ): PrismaNumberFilter | PrismaStringFilters | Record<string, unknown> {
-//     const rangeQuery: Record<string, string | number | (string | number)> = {
-//       Object.keys(value).forEach((operator) => {
-//         const opareatorValue =value[operator];
-
-//         const parsedValue : string | number = typeof opareatorValue === "string" &&v !isNaN(Number(opareatorValue)) ? Number(opareatorValue): opareatorValue;
-
-//         switch(operator){
-//           case "lt":
-//           case "lte":
-//           case "gt":
-//           case "gte":
-//           case "equals":
-//           case "not":
-//           case "contains":
-//           case "startsWith":
-//           case "endsWith":
-//           rangeQuery.operator = parsedValue;
-//           break;
-
-//           case 'in':
-//           case 'notIn' :
-//             if(Array.isArray(opareatorValue)){
-//               rangeQuery[operator] = opareatorValue
-//             }else {
-//               rangeQuery[operator] =[parsedValue]
-//             }
-
-//         }
-//         break;
-//         default:
-//         break
-//       })
-//       return Object.keys(rangeQuery).length > 0 ? rangeQuery :value;
-
-//     };
-//   }
-// }
-
 import {
   IqueryConfig,
   IqueryParams,
@@ -245,6 +7,7 @@ import {
   PrismaModelDelegate,
   PrismaStringFilters,
   PrismaNumberFilter,
+  IQueryResult,
 } from "../interface/query.interface";
 
 export class QueryBuilder<
@@ -504,19 +267,53 @@ export class QueryBuilder<
     return this;
   }
 
+  // ====where method ======//
+
+  where(condition: TWhereInput): this {
+    this.query.where = this.deepMerge(
+      this.query.where as Record<string, unknown>,
+      condition as Record<string, unknown>,
+    );
+
+    this.countQuery.where = this.deepMerge(
+      this.countQuery.where as Record<string, unknown>,
+      condition as Record<string, unknown>,
+    );
+
+    return this;
+  }
+
   // ================= EXECUTE =================
-  async execute() {
-    const data = await this.model.findMany(this.query);
-    const total = await this.model.count(this.countQuery);
+  async execute(): Promise<IQueryResult<T>> {
+    const [total, data] = await Promise.all([
+      this.model.count(
+        this.countQuery as Parameters<typeof this.model.count>[0],
+      ),
+      this.model.findMany(this.query as Parameters<typeof this.model.count>[0]),
+    ]);
+
+    const totalPages = Math.ceil(total / this.limit);
 
     return {
+      data: data as T[],
       meta: {
         page: this.page,
         limit: this.limit,
         total,
+        totalPage: totalPages,
       },
-      data,
     };
+  }
+
+  // =============count=================//
+  async count(): Promise<number> {
+    return await this.model.count(
+      this.countQuery as Parameters<typeof this.model.count>[0],
+    );
+  }
+
+  getQuery(): PrismaFindManyArgs {
+    return this.query;
   }
 
   // ================= HELPERS =================
@@ -577,5 +374,35 @@ export class QueryBuilder<
     });
 
     return Object.keys(rangeQuery).length > 0 ? rangeQuery : value;
+  }
+
+  // deepmerge
+
+  private deepMerge(
+    target: Record<string, unknown>,
+    source: Record<string, unknown>,
+  ): Record<string, unknown> {
+    const result = { ...target };
+    for (const key in source) {
+      if (
+        source[key] &&
+        typeof source[key] === "object" &&
+        !Array.isArray(source[key])
+      ) {
+        if (
+          result[key] &&
+          typeof result[key] === "object" &&
+          !Array.isArray(result[key])
+        ) {
+          result[key] = this.deepMerge(
+            result[key] as Record<string, unknown>,
+            source[key] as Record<string, unknown>,
+          );
+        } else {
+          result[key] = source[key];
+        }
+      }
+    }
+    return result;
   }
 }
