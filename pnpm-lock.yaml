@@ -18,14 +18,17 @@ importers:
         specifier: ^1.4.18
         version: 1.4.18(@prisma/client@7.4.1(prisma@7.4.1(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(typescript@5.9.3))(typescript@5.9.3))(mysql2@3.15.3)(pg@8.18.0)(prisma@7.4.1(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(typescript@5.9.3))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       cloudinary:
-        specifier: ^2.9.0
-        version: 2.9.0
+        specifier: ^1.41.0
+        version: 1.41.0
       cookie-parser:
         specifier: ^1.4.7
         version: 1.4.7
       cors:
         specifier: ^2.8.6
         version: 2.8.6
+      date-fns:
+        specifier: ^4.1.0
+        version: 4.1.0
       ejs:
         specifier: ^4.0.1
         version: 4.0.1
@@ -46,7 +49,10 @@ importers:
         version: 2.1.1
       multer-storage-cloudinary:
         specifier: ^4.0.0
-        version: 4.0.0(cloudinary@2.9.0)
+        version: 4.0.0(cloudinary@1.41.0)
+      node-cron:
+        specifier: ^4.2.1
+        version: 4.2.1
       nodemailer:
         specifier: ^8.0.1
         version: 8.0.1
@@ -56,6 +62,12 @@ importers:
       qs:
         specifier: ^6.15.0
         version: 6.15.0
+      stripe:
+        specifier: ^20.4.1
+        version: 20.4.1(@types/node@25.3.0)
+      uuid:
+        specifier: ^13.0.0
+        version: 13.0.0
       zod:
         specifier: ^4.3.6
         version: 4.3.6
@@ -69,6 +81,9 @@ importers:
       '@types/cors':
         specifier: ^2.8.19
         version: 2.8.19
+      '@types/date-fns':
+        specifier: ^2.6.3
+        version: 2.6.3
       '@types/ejs':
         specifier: ^3.1.5
         version: 3.1.5
@@ -96,6 +111,12 @@ importers:
       '@types/qs':
         specifier: ^6.15.0
         version: 6.15.0
+      '@types/stripe':
+        specifier: ^8.0.417
+        version: 8.0.417(@types/node@25.3.0)
+      '@types/uuid':
+        specifier: ^11.0.0
+        version: 11.0.0
       dotenv:
         specifier: ^17.3.1
         version: 17.3.1
@@ -468,6 +489,10 @@ packages:
   '@types/cors@2.8.19':
     resolution: {integrity: sha512-mFNylyeyqN93lfe/9CSxOGREz8cpzAhH+E93xJ4xWQf62V8sQ/24reV2nyzUWM6H6Xji+GGHpkbLe7pVoUEskg==}
 
+  '@types/date-fns@2.6.3':
+    resolution: {integrity: sha512-Ke1lw2Ni1t/wMUoLtKFmSNCLozcTBd6vmMqFP4hRzXn6qzkNt97bPAX0x5Y/c15DP43kKvwW1ycStD5+43jVQA==}
+    deprecated: This is a stub types definition. date-fns provides its own type definitions, so you do not need this installed.
+
   '@types/ejs@3.1.5':
     resolution: {integrity: sha512-nv+GSx77ZtXiJzwKdsASqi+YQ5Z7vwHsTP0JY2SiQgjGckkBRKZnk8nIM+7oUZ1VCtuTz0+By4qVR7fqzp/Dfg==}
 
@@ -521,6 +546,14 @@ packages:
 
   '@types/serve-static@2.2.0':
     resolution: {integrity: sha512-8mam4H1NHLtu7nmtalF7eyBH14QyOASmcxHhSfEoRyr0nP/YdoesEtU+uSRvMe96TW/HPTtkoKqQLl53N7UXMQ==}
+
+  '@types/stripe@8.0.417':
+    resolution: {integrity: sha512-PTuqskh9YKNENnOHGVJBm4sM0zE8B1jZw1JIskuGAPkMB+OH236QeN8scclhYGPA4nG6zTtPXgwpXdp+HPDTVw==}
+    deprecated: This is a stub types definition. stripe provides its own type definitions, so you do not need this installed.
+
+  '@types/uuid@11.0.0':
+    resolution: {integrity: sha512-HVyk8nj2m+jcFRNazzqyVKiZezyhDKrGUA3jlEcg/nZ6Ms+qHwocba1Y/AaVaznJTAM9xpdFSh+ptbNrhOGvZA==}
+    deprecated: This is a stub types definition. uuid provides its own type definitions, so you do not need this installed.
 
   '@typescript-eslint/eslint-plugin@8.56.0':
     resolution: {integrity: sha512-lRyPDLzNCuae71A3t9NEINBiTn7swyOhvUj3MyUOxb8x6g6vPEFoOU+ZRmGMusNC3X3YMhqMIX7i8ShqhT74Pw==}
@@ -739,9 +772,14 @@ packages:
   citty@0.2.1:
     resolution: {integrity: sha512-kEV95lFBhQgtogAPlQfJJ0WGVSokvLr/UEoFPiKKOXF7pl98HfUVUD0ejsuTCld/9xH9vogSywZ5KqHzXrZpqg==}
 
-  cloudinary@2.9.0:
-    resolution: {integrity: sha512-F3iKMOy4y0zy0bi5JBp94SC7HY7i/ImfTPSUV07iJmRzH1Iz8WavFfOlJTR1zvYM/xKGoiGZ3my/zy64In0IQQ==}
-    engines: {node: '>=9'}
+  cloudinary-core@2.14.1:
+    resolution: {integrity: sha512-57rgZSQD2cJsz1rga6M7jIDQuEAzkwvq63vTvs3/I8rNpGLyHMoKoIvBkNS0Guv5RZ9KDReJhI2LmElk4D9U1g==}
+    peerDependencies:
+      lodash: '>=4.0'
+
+  cloudinary@1.41.0:
+    resolution: {integrity: sha512-qFf2McjvILJITePf4VF1PrY/8c2zy+/q5FVV6V3VWrP/gpIZsusPqXL4QZ6ZKXibPRukzMYqsQEhaSQgJHKKow==}
+    engines: {node: '>=0.6'}
 
   concat-stream@2.0.0:
     resolution: {integrity: sha512-MWufYdFw53ccGjCA+Ol7XJYpAlW6/prSMzuPOTRnJGcGzuhLn4Scrz7qf6o8bROZ514ltazcIFJZevcfbo0x7A==}
@@ -777,6 +815,9 @@ packages:
     resolution: {integrity: sha512-yki5XnKuf750l50uGTllt6kKILY4nQ1eNIQatoXEByZ5dWgnKqbnqmTrBE5B4N7lrMJKQ2ytWMiTO2o0v6Ew/w==}
     engines: {node: '>= 0.6'}
 
+  core-js@3.49.0:
+    resolution: {integrity: sha512-es1U2+YTtzpwkxVLwAFdSpaIMyQaq0PBgm3YD1W3Qpsn1NAmO3KSgZfu+oGSWVu6NvLHoHCV/aYcsE5wiB7ALg==}
+
   cors@2.8.6:
     resolution: {integrity: sha512-tJtZBBHA6vjIAaF6EnIaq6laBBP9aq/Y3ouVJjEfoHbRBcHBAHYcMh/w8LDrk2PvIMMq8gmopa5D4V8RmbrxGw==}
     engines: {node: '>= 0.10'}
@@ -787,6 +828,9 @@ packages:
 
   csstype@3.2.3:
     resolution: {integrity: sha512-z1HGKcYy2xA8AGQfwrn0PAy+PB7X/GSj3UVJW9qKyn43xWa+gl5nXmU4qqLMRzWVLFC8KusUX8T/0kCiOYpAIQ==}
+
+  date-fns@4.1.0:
+    resolution: {integrity: sha512-Ukq0owbQXxa/U3EGtsdVBkR1w7KOQ5gIBqdH2hkvknzZPYvBxb/aa6E8L7tmjFtkwZBu3UXBbjIgPo/Ez4xaNg==}
 
   debug@4.4.3:
     resolution: {integrity: sha512-RGwwWnwQvkVfavKVt22FGLw+xYSdzARwm0ru6DhTVA3umU5hZc28V3kO4stgYryrTlLpuvgI9GiijltAjNbcqA==}
@@ -1250,6 +1294,10 @@ packages:
     resolution: {integrity: sha512-8Ofs/AUQh8MaEcrlq5xOX0CQ9ypTF5dl78mjlMNfOK08fzpgTHQRQPBxcPlEtIw0yRpws+Zo/3r+5WRby7u3Gg==}
     engines: {node: '>= 0.6'}
 
+  node-cron@4.2.1:
+    resolution: {integrity: sha512-lgimEHPE/QDgFlywTd8yTR61ptugX3Qer29efeyWw2rv259HtGBNn1vZVmp8lB9uo9wC0t/AT4iGqXxia+CJFg==}
+    engines: {node: '>=6.0.0'}
+
   node-fetch-native@1.6.7:
     resolution: {integrity: sha512-g9yhqoedzIUm0nTnTqAQvueMPVOuIY16bqgAJJC8XOOubYFNwz6IER9qs0Gq2Xd0+CecCKFjtdDTMA4u4xG06Q==}
 
@@ -1412,6 +1460,14 @@ packages:
   pure-rand@6.1.0:
     resolution: {integrity: sha512-bVWawvoZoBYpp6yIoQtQXHZjmz35RSVHnUOTefl8Vcjr8snTPY1wnpSPMWekcFwbxI6gtmT7rSYPFvz71ldiOA==}
 
+  q@1.5.1:
+    resolution: {integrity: sha512-kV/CThkXo6xyFEZUugw/+pIOywXcDbFYgSct5cT3gqlbkBE1SJdwy6UQoZvodiWF/ckQLZyDE/Bu1M6gVu5lVw==}
+    engines: {node: '>=0.6.0', teleport: '>=0.2.0'}
+    deprecated: |-
+      You or someone you depend on is using Q, the JavaScript Promise library that gave JavaScript developers strong feelings about promises. They can almost certainly migrate to the native JavaScript promise now. Thank you literally everyone for joining me in this bet against the odds. Be excellent to each other.
+
+      (For a CapTP with native promises, see @endo/eventual-send and @endo/captp)
+
   qs@6.15.0:
     resolution: {integrity: sha512-mAZTtNCeetKMH+pSjrb76NAM8V9a05I9aBZOHztWy/UqcJdQYNsf59vrRKWnojAT9Y+GbIvoTBC++CPHqpDBhQ==}
     engines: {node: '>=0.6'}
@@ -1548,6 +1604,15 @@ packages:
   string_decoder@1.3.0:
     resolution: {integrity: sha512-hkRX8U1WjJFd8LsDJ2yQ/wWWxaopEsABU1XfkM8A+j0+85JAGppt16cr1Whg6KIbb4okU6Mql6BOj+uup/wKeA==}
 
+  stripe@20.4.1:
+    resolution: {integrity: sha512-axCguHItc8Sxt0HC6aSkdVRPffjYPV7EQqZRb2GkIa8FzWDycE7nHJM19C6xAIynH1Qp1/BHiopSi96jGBxT0w==}
+    engines: {node: '>=16'}
+    peerDependencies:
+      '@types/node': '>=16'
+    peerDependenciesMeta:
+      '@types/node':
+        optional: true
+
   tinyexec@1.0.2:
     resolution: {integrity: sha512-W/KYk+NFhkmsYpuHq5JykngiOCnxeVL8v8dFnqxSD8qEEdRfXk1SDM6JzNqcERbcGYj9tMrDQBYV9cjgnunFIg==}
     engines: {node: '>=18'}
@@ -1610,6 +1675,10 @@ packages:
 
   util-deprecate@1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
+
+  uuid@13.0.0:
+    resolution: {integrity: sha512-XQegIaBTVUjSHliKqcnFqYypAd4S+WCYt5NIeRs6w/UAry7z8Y9j5ZwRRL4kzq9U3sD6v+85er9FvkEaBpji2w==}
+    hasBin: true
 
   valibot@1.2.0:
     resolution: {integrity: sha512-mm1rxUsmOxzrwnX5arGS+U4T25RdvpPjPN4yR0u9pUBov9+zGVtO84tif1eY4r6zWxVxu3KzIyknJy3rxfRZZg==}
@@ -1939,6 +2008,10 @@ snapshots:
     dependencies:
       '@types/node': 25.3.0
 
+  '@types/date-fns@2.6.3':
+    dependencies:
+      date-fns: 4.1.0
+
   '@types/ejs@3.1.5': {}
 
   '@types/esrecurse@4.3.1': {}
@@ -2003,6 +2076,16 @@ snapshots:
     dependencies:
       '@types/http-errors': 2.0.5
       '@types/node': 25.3.0
+
+  '@types/stripe@8.0.417(@types/node@25.3.0)':
+    dependencies:
+      stripe: 20.4.1(@types/node@25.3.0)
+    transitivePeerDependencies:
+      - '@types/node'
+
+  '@types/uuid@11.0.0':
+    dependencies:
+      uuid: 13.0.0
 
   '@typescript-eslint/eslint-plugin@8.56.0(@typescript-eslint/parser@8.56.0(eslint@10.0.0(jiti@2.6.1))(typescript@5.9.3))(eslint@10.0.0(jiti@2.6.1))(typescript@5.9.3)':
     dependencies:
@@ -2230,9 +2313,16 @@ snapshots:
 
   citty@0.2.1: {}
 
-  cloudinary@2.9.0:
+  cloudinary-core@2.14.1(lodash@4.17.21):
     dependencies:
       lodash: 4.17.21
+
+  cloudinary@1.41.0:
+    dependencies:
+      cloudinary-core: 2.14.1(lodash@4.17.21)
+      core-js: 3.49.0
+      lodash: 4.17.21
+      q: 1.5.1
 
   concat-stream@2.0.0:
     dependencies:
@@ -2260,6 +2350,8 @@ snapshots:
 
   cookie@0.7.2: {}
 
+  core-js@3.49.0: {}
+
   cors@2.8.6:
     dependencies:
       object-assign: 4.1.1
@@ -2272,6 +2364,8 @@ snapshots:
       which: 2.0.2
 
   csstype@3.2.3: {}
+
+  date-fns@4.1.0: {}
 
   debug@4.4.3:
     dependencies:
@@ -2727,9 +2821,9 @@ snapshots:
 
   ms@2.1.3: {}
 
-  multer-storage-cloudinary@4.0.0(cloudinary@2.9.0):
+  multer-storage-cloudinary@4.0.0(cloudinary@1.41.0):
     dependencies:
-      cloudinary: 2.9.0
+      cloudinary: 1.41.0
 
   multer@2.1.1:
     dependencies:
@@ -2759,6 +2853,8 @@ snapshots:
   natural-compare@1.4.0: {}
 
   negotiator@1.0.0: {}
+
+  node-cron@4.2.1: {}
 
   node-fetch-native@1.6.7: {}
 
@@ -2905,6 +3001,8 @@ snapshots:
 
   pure-rand@6.1.0: {}
 
+  q@1.5.1: {}
+
   qs@6.15.0:
     dependencies:
       side-channel: 1.1.0
@@ -3049,6 +3147,10 @@ snapshots:
     dependencies:
       safe-buffer: 5.2.1
 
+  stripe@20.4.1(@types/node@25.3.0):
+    optionalDependencies:
+      '@types/node': 25.3.0
+
   tinyexec@1.0.2: {}
 
   tinyglobby@0.2.15:
@@ -3108,6 +3210,8 @@ snapshots:
       punycode: 2.3.1
 
   util-deprecate@1.0.2: {}
+
+  uuid@13.0.0: {}
 
   valibot@1.2.0(typescript@5.9.3):
     optionalDependencies:

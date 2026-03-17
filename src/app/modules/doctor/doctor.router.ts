@@ -5,7 +5,11 @@ import { Role } from "../../../generated/prisma/enums";
 
 const router = Router();
 
-router.get("/", checkAuth(Role.ADMIN, Role.SUPER_ADMIN), doctorController.getAllDoctors);
+router.get(
+  "/",
+  // checkAuth(Role.ADMIN, Role.SUPER_ADMIN),
+  doctorController.getAllDoctors,
+);
 router.get(
   "/:id",
   checkAuth(Role.ADMIN, Role.SUPER_ADMIN),

@@ -17,7 +17,7 @@ router.post(
 );
 router.get(
   "/",
-  checkAuth(Role.ADMIN, Role.SUPER_ADMIN),
+  // checkAuth(Role.ADMIN, Role.SUPER_ADMIN),
   SpecialtyController.getAllSpecialties,
 );
 router.patch("/:id", SpecialtyController.updateSpecialties);
